@@ -27,7 +27,7 @@ from prometheus_client import (
 app = Flask(__name__)
 
 APP_VERSION = os.getenv("APP_VERSION", "dev")
-APP_GREETING = os.getenv("APP_GREETING", "Hello from TaskTracker!")
+APP_GREETING = os.getenv("APP_GREETING", "Welcome to my DevOps project!!!")
 
 # Tasks live in memory. When the container restarts, they are gone.
 tasks = []
