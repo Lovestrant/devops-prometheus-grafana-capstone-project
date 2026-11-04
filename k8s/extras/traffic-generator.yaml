@@ -1,0 +1,37 @@
+# Sends traffic from INSIDE the cluster, so requests are spread across all pods.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: traffic-generator
+  namespace: tasktracker
+  labels:
+    app: traffic-generator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: traffic-generator
+  template:
+    metadata:
+      labels:
+        app: traffic-generator
+    spec:
+      containers:
+        - name: curl
+          image: curlimages/curl:8.8.0
+          command:
+            - sh
+            - -c
+            - |
+              while true; do
+                curl -s -o /dev/null http://tasktracker/
+                curl -s -o /dev/null http://tasktracker/tasks
+                curl -s -o /dev/null -X POST -H "Content-Type: application/json" -d '{"title":"from traffic generator"}' http://tasktracker/tasks
+                curl -s -o /dev/null http://tasktracker/slow
+                curl -s -o /dev/null http://tasktracker/error
+                sleep 1
+              done
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi

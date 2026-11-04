@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tasktracker
+  namespace: tasktracker
+  labels:
+    app: tasktracker
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: tasktracker
+  template:
+    metadata:
+      labels:
+        app: tasktracker
+    spec:
+      containers:
+        - name: tasktracker
+          image: tasktracker:1.0.0
+          imagePullPolicy: IfNotPresent   # use the image we loaded into kind
+          ports:
+            - name: http
+              containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: tasktracker-config
+          readinessProbe:                 # "is this pod ready for traffic?"
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          livenessProbe:                  # "is this pod still alive?"
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 128Mi

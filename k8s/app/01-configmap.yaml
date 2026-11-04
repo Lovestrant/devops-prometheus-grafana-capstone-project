@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tasktracker-config
+  namespace: tasktracker
+data:
+  APP_GREETING: "Hello from Kubernetes!"

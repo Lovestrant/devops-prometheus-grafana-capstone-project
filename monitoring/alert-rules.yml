@@ -1,0 +1,18 @@
+groups:
+  - name: tasktracker-alerts
+    rules:
+      - alert: TaskTrackerDown
+        expr: up{job="tasktracker"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "TaskTracker target {{ $labels.instance }} is down"
+
+      - alert: HighErrorRate
+        expr: sum(rate(app_http_requests_total{status=~"5.."}[1m])) / sum(rate(app_http_requests_total[1m])) > 0.2
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "More than 20% of requests are failing"

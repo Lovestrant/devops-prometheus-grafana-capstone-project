@@ -1,0 +1,15 @@
+global:
+  scrape_interval: 5s       # how often Prometheus collects metrics
+  evaluation_interval: 5s   # how often alert rules are checked
+
+rule_files:
+  - /etc/prometheus/alert-rules.yml
+
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  - job_name: tasktracker
+    static_configs:
+      - targets: ["app:8000"]   # "app" is the service name in docker-compose.yml
